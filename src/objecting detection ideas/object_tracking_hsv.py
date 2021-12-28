@@ -24,7 +24,7 @@ V_low= 0
 V_high = 255
 
 
-cap = cv2.VideoCapture("videos/Steph Curry 3 point contest.mp4")
+cap = cv2.VideoCapture("../videos/Steph Curry 3 point contest.mp4")
 
 
 cv2.namedWindow('controls',2)
