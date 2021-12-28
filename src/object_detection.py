@@ -43,8 +43,8 @@ _, frame = cap.read()
 
 while True:
 
-    bballLower = (H_low, S_low, V_low)
-    bballUpper = (H_high, S_high, V_high)
+    bballLower = (0, 0, 53)
+    bballUpper = (13, 187, 147)
 
     if frame is None:
         break
@@ -65,7 +65,10 @@ while True:
     if key == 27:
         break
     if key == 13:
+        print(bballLower)
+        print(bballUpper)
         _, frame = cap.read()
+
 
 cap.release()
 cv2.destroyAllWindows()
