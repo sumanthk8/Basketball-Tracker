@@ -22,7 +22,7 @@ while True:
             cv2.drawContours(frame, [cnt], -1, (0, 255, 0), 2)
 
     cv2.imshow("Frame", frame)
-    cv2.imshow("Mask", mask)
+    # cv2.imshow("Mask", mask)
 
     key = cv2.waitKey(24)
     if key == 27:
