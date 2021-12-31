@@ -13,7 +13,7 @@ newFrame = True
 
 while True:
 
-    key = cv2.waitKey(24)
+    key = cv2.waitKey(1)
     if key == 27:
         break
     if key == 13:
