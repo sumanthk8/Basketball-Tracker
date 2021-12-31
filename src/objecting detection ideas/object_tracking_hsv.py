@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import imutils
 from collections import deque
+import math
 
 cap = cv2.VideoCapture("../videos/Steph Curry 3 point contest.mp4")
 
@@ -29,13 +30,30 @@ while True:
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+    bestContour = None;
+    bestMatchFactor = 0
+
     for cnt in contours:
+
         area = cv2.contourArea(cnt)
 
-
-
         if area > 250:
-            cv2.drawContours(frame, [cnt], -1, (0, 255, 0), 2)
+            (x, y), radius = cv2.minEnclosingCircle(cnt)
+
+            if (y > 350):
+                continue
+
+            matchFactor = area / (math.pi * radius * radius)
+
+            if matchFactor > bestMatchFactor:
+                bestContour = cnt
+                bestMatchFactor = matchFactor
+
+    if bestContour is not None:
+        (x, y), radius = cv2.minEnclosingCircle(bestContour)
+        print(bestMatchFactor)
+        cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 0))
+
 
     cv2.imshow("Frame", frame)
     cv2.imshow("Blurred", blurred)
@@ -45,8 +63,6 @@ while True:
     if key == 27:
         break
     if key == 13:
-        print(bballLower)
-        print(bballUpper)
         _, frame = cap.read()
 
 
