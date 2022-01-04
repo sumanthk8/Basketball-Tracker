@@ -7,7 +7,7 @@ import math
 cap = cv2.VideoCapture("../videos/Steph Curry 3 point contest.mp4")
 
 cv2.namedWindow('controls',2)
-cv2.resizeWindow("controls", 550,10);
+cv2.resizeWindow("controls", 550, 10);
 
 
 _, frame = cap.read()
@@ -16,7 +16,7 @@ once = False;
 
 while True:
 
-    bballLower = (5, 45, 60)
+    bballLower = (5, 60, 60)
     bballUpper = (18, 255, 170)
 
     if frame is None:
@@ -24,10 +24,10 @@ while True:
 
     # frame = imutils.resize(frame, width=600)
     blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
-    mask = cv2.erode(mask, None, iterations=1)
+    mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=1)
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -42,7 +42,7 @@ while True:
         if area > 250:
             (x, y), radius = cv2.minEnclosingCircle(cnt)
 
-            if (y > 320):
+            if (y > 275):
                 continue
 
             matchFactor = area / (math.pi * radius * radius)
