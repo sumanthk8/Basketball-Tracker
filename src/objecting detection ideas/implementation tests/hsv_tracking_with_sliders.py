@@ -18,12 +18,12 @@ def callback(x):
     print(H_high, S_high, V_high)
 
 #global variable
-H_low = 0
-H_high = 179
-S_low= 0
+H_low = 4
+H_high = 18
+S_low= 45
 S_high = 255
-V_low= 0
-V_high = 255
+V_low= 60
+V_high = 150
 
 
 cap = cv2.VideoCapture("../../videos/Steph Curry 3 point contest.mp4")
@@ -41,15 +41,22 @@ cv2.createTrackbar('high S', 'controls', 255, 255, callback)
 cv2.createTrackbar('low V', 'controls', 0, 255, callback)
 cv2.createTrackbar('high V', 'controls', 255, 255, callback)
 
+cv2.setTrackbarPos('low H', 'controls', H_low)
+cv2.setTrackbarPos('low S', 'controls', S_low)
+cv2.setTrackbarPos('low V', 'controls', V_low)
+cv2.setTrackbarPos('high H', 'controls', H_high)
+cv2.setTrackbarPos('high S', 'controls', S_high)
+cv2.setTrackbarPos('high V', 'controls', V_high)
+
 _, frame = cap.read()
 
 while True:
 
-    # bballLower = (H_low, S_low, V_low)
-    # bballUpper = (H_high, S_high, V_high)
+    bballLower = (H_low, S_low, V_low)
+    bballUpper = (H_high, S_high, V_high)
 
-    bballLower = (0, 75, 65)
-    bballUpper = (15, 255, 255)
+    # bballLower = (4, 45, 60)
+    # bballUpper = (18, 255, 150)
 
     if frame is None:
         break
@@ -60,7 +67,7 @@ while True:
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
     mask = cv2.erode(mask, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=5)
+    mask = cv2.dilate(mask, None, iterations=4)
 
     cv2.imshow("Frame", frame)
     cv2.imshow("Mask", mask)

@@ -14,8 +14,8 @@ _, frame = cap.read()
 
 while True:
 
-    bballLower = (0, 75, 65)
-    bballUpper = (15, 255, 255)
+    bballLower = (4, 45, 60)
+    bballUpper = (18, 255, 150)
 
     if frame is None:
         break
@@ -51,19 +51,19 @@ while True:
 
     if bestContour is not None:
         (x, y), radius = cv2.minEnclosingCircle(bestContour)
-        print(bestMatchFactor)
+        # print(bestMatchFactor)
         cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 0))
 
 
     cv2.imshow("Frame", frame)
-    cv2.imshow("Blurred", blurred)
+    cv2.imshow("Blurred", mask)
     # create trackbars for high,low H,S,V
 
     key = cv2.waitKey(24)
     if key == 27:
         break
-    if key == 13:
-        _, frame = cap.read()
+    # if key == 13:
+    _, frame = cap.read()
 
 
 cap.release()
