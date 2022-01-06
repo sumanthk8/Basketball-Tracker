@@ -14,7 +14,7 @@ class KF:
 
     def predict(self, dt: float) -> None:
         # x_(k+1) = F * x_k
-        # P = F P F^T + G a G^T
+        # P = F P F^T + G G^T a
         F = np.array([[1, dt], [0, 1]])
         new_x = F.dot(self._x)
 
@@ -23,6 +23,29 @@ class KF:
 
         self._P = new_P
         self._x = new_x
+
+    def update(self, meas_value: float, meas_var: float) -> None:
+        # y = z - H x
+        # S = H P H^T + R
+        # K = P H^T S^-1
+        # x = x + K y
+        # P = (I - K H) P
+
+        z = np.array([meas_value])
+        R = np.array([meas_var])
+
+        H = np.array([1,0]).reshape((1, 2))
+
+        y = z - H.dot(self._x)
+        S = H.dot(self._P).dot(H.T) + R
+
+        K = self._P.dot(H.T).dot(np.linalg.inv(S))
+
+        new_x = self._x + K.dot(y)
+        new_P = (np.eye(2) - K.dot(H)).dot(self._P)
+
+        self._x = new_x
+        self._P = new_P
 
     @property
     def mean(self) -> np.array:
