@@ -12,23 +12,23 @@ cv2.resizeWindow("controls", 550, 10);
 
 _, frame = cap.read()
 
-once = False;
+once = False
 
 while True:
 
-    bballLower = (5, 60, 60)
-    bballUpper = (18, 255, 170)
+    bballLower = (5, 80, 60)
+    bballUpper = (16, 255, 150)
 
     if frame is None:
         break
 
     # frame = imutils.resize(frame, width=600)
-    blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+    blurred = cv2.GaussianBlur(frame, (21, 21), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
-    mask = cv2.erode(mask, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=1)
+    mask = cv2.erode(mask, None, iterations=1)
+    # mask = cv2.dilate(mask, None, iterations=1)
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -40,14 +40,23 @@ while True:
         area = cv2.contourArea(cnt)
 
         if area > 250:
+
             (x, y), radius = cv2.minEnclosingCircle(cnt)
+            ((rx, ry), (width, height), angle) = cv2.minAreaRect(cnt)
+            minRectArea = width*height
+            print(minRectArea)
+            minCircArea = math.pi * radius * radius
+            print(minCircArea)
 
             if (y > 275):
                 continue
 
-            matchFactor = area / (math.pi * radius * radius)
+            if minCircArea > minRectArea:
+                continue
 
-            if matchFactor > bestMatchFactor and matchFactor > 0.55:
+            matchFactor = area / (minCircArea)
+
+            if matchFactor > bestMatchFactor and matchFactor > .5:
                 bestContour = cnt
                 bestMatchFactor = matchFactor
 

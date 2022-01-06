@@ -19,11 +19,11 @@ def callback(x):
 
 #global variable
 H_low = 5
-H_high = 18
-S_low= 60
+H_high = 16
+S_low= 80
 S_high = 255
 V_low= 60
-V_high = 170
+V_high = 150
 
 
 cap = cv2.VideoCapture("../../videos/Steph Curry 3 point contest.mp4")
@@ -62,12 +62,12 @@ while True:
         break
 
     # frame = imutils.resize(frame, width=600)
-    blurred = cv2.GaussianBlur(frame, (31, 31), 0)
+    blurred = cv2.GaussianBlur(frame, (21, 21), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
-    mask = cv2.erode(mask, None, iterations=2)
-    mask = cv2.dilate(mask, None, iterations=2)
+    mask = cv2.erode(mask, None, iterations=1)
+    # mask = cv2.dilate(mask, None, iterations=2)
 
     cv2.imshow("Frame", frame)
     cv2.imshow("Mask", mask)
