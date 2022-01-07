@@ -5,7 +5,7 @@ from collections import deque
 import math
 from src.kalman_filter.kalman_filter import KF
 
-cap = cv2.VideoCapture("../../videos/jan 6th 2022/freestyle1.MOV")
+cap = cv2.VideoCapture("../../videos/jan 6th 2022/freestyle2.MOV")
 
 
 _, frame = cap.read()
@@ -25,6 +25,9 @@ points = deque()
 for i in range(0, 40):
     points.append(None)
 
+framesDetected = 0
+framesTotal = 0
+
 while True:
 
     if not new:
@@ -43,6 +46,7 @@ while True:
         break
 
     frame = imutils.resize(frame, width=800)
+    #MAIN thing was to reduce gaussian blur
     blurred = cv2.GaussianBlur(frame, (3, 3), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -66,7 +70,7 @@ while True:
 
         area = cv2.contourArea(cnt)
 
-        if area > 50:
+        if area > 25:
 
             (x, y), radius = cv2.minEnclosingCircle(cnt)
             minCircArea = math.pi * radius * radius
@@ -93,11 +97,11 @@ while True:
     points.popleft()
     if bestContour is not None:
         (x, y), radius = cv2.minEnclosingCircle(bestContour)
-
+        framesDetected += 1
         if kfx is not None:
 
-            cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 0))
-            cv2.circle(frame, (int(x), int(y)), 1, (255, 0, 0))
+            # cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 0))
+            # cv2.circle(frame, (int(x), int(y)), 1, (255, 0, 0))
             # print((int(xBounds[0]-distanceThreshold), int(yBounds[0]-distanceThreshold)),
             #         (int(xBounds[1]+distanceThreshold), int(yBounds[1]+distanceThreshold)))
             points.append((int(x), int(y)))
@@ -145,5 +149,8 @@ while True:
 
     new = False
 
+    framesTotal+=1
+
 cap.release()
 cv2.destroyAllWindows()
+print(float(framesDetected)/framesTotal)
