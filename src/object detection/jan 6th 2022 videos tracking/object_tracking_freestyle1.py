@@ -10,6 +10,8 @@ cap = cv2.VideoCapture("../../videos/jan 6th 2022/freestyle1.MOV")
 
 _, frame = cap.read()
 
+framesWithoutDetection = 0
+
 kfx = None
 prevX = -1
 kfy = None
@@ -23,9 +25,9 @@ while True:
         key = cv2.waitKey(1)
         if key == 27:
             break
-        # if key == 13:
-        _, frame = cap.read()
-        new = True
+        if key == 13:
+            _, frame = cap.read()
+            new = True
         continue
 
     bballLower = (0, 0, 0)
@@ -40,12 +42,18 @@ while True:
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
     mask = cv2.erode(mask, None, iterations=1)
-    # mask = cv2.dilate(mask, None, iterations=5)
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     bestContour = None;
     bestMatchFactor = 0
+
+    if kfx is not None:
+        kfx.predict(1.0 / 60)
+        xBounds = kfx.twoSidedConfidenceInterval()
+
+        kfy.predict(1.0 / 60)
+        yBounds = kfy.twoSidedConfidenceInterval()
 
     for cnt in contours:
 
@@ -58,24 +66,35 @@ while True:
 
             matchFactor = area / (minCircArea)
 
-            if matchFactor > bestMatchFactor and matchFactor > .5:
+            # predict with kalman filter
+
+            if kfx is not None:
+                if (x < xBounds[0]) or (x > xBounds[1]):
+                    continue
+
+                if (y < yBounds[0]) or (y > yBounds[1]):
+                    continue
+
+            if matchFactor > bestMatchFactor:
                 bestContour = cnt
                 bestMatchFactor = matchFactor
 
-            # if prevX < 0:
-            #     prevX = x
-            #     prevY = y
-            #
-            # if kf is None and prevX >= 0:
-            #     kf = new KF(x, (x-prevX)/(1.0/60))
-
-
     if bestContour is not None:
-        print(bestMatchFactor)
         (x, y), radius = cv2.minEnclosingCircle(bestContour)
-        cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 0))
+
+        if kfx is not None:
+            cv2.circle(frame, (int(x), int(y)), int(radius), (0, 255, 0))
+            kfx.update(x, 0.1)
+            kfy.update(y, 0.1)
+        elif prevX < 0:
+            prevX = x
+            prevY = y
+        else:
+            kfx = KF(x, (x - prevX) / (1.0 / 60), 0.1)
+            kfy = KF(y, (y - prevY) / (1.0 / 60), 0.1)
 
     cv2.imshow("Frame", frame)
+    cv2.setWindowProperty("Frame", cv2.WND_PROP_TOPMOST, 1)
     cv2.imshow("Blurred", mask)
     # create trackbars for high,low H,S,V
 

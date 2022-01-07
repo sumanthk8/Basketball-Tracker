@@ -53,7 +53,7 @@ class KF:
         self._x = new_x
         self._P = new_P
 
-    def twoSidedConfidenceInterval(self, int) -> numpy.array:
+    def twoSidedConfidenceInterval(self) -> numpy.array:
         return numpy.array([self._x[0] - 1.96*np.sqrt(self._P[0, 0]), self._x[0] + 1.96*np.sqrt(self._P[0, 0])])
 
     @property
