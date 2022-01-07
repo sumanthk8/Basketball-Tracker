@@ -21,7 +21,7 @@ def callback(x):
 # global variable
 
 H_low = 0
-H_high = 16
+H_high = 14
 S_low = 0
 S_high = 186
 V_low = 0
@@ -62,7 +62,7 @@ while True:
         break
 
     frame = imutils.resize(frame, width=800)
-    blurred = cv2.GaussianBlur(frame, (5, 5), 0)
+    blurred = cv2.GaussianBlur(frame, (15, 15), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
