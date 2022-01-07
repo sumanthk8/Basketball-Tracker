@@ -17,20 +17,20 @@ def callback(x):
     print(H_low, S_low, V_low)
     print(H_high, S_high, V_high)
 
-#global variable
-H_low = 5
+
+# global variable
+
+H_low = 0
 H_high = 16
-S_low= 80
-S_high = 255
-V_low= 60
-V_high = 150
+S_low = 0
+S_high = 186
+V_low = 0
+V_high = 196
 
+cap = cv2.VideoCapture("../../../videos/jan 6th 2022/freestyle1.MOV")
 
-cap = cv2.VideoCapture("../../videos/Steph Curry 3 point contest.mp4")
-
-
-cv2.namedWindow('controls',2)
-cv2.resizeWindow("controls", 550,10);
+cv2.namedWindow('controls', 2)
+cv2.resizeWindow("controls", 550, 10);
 
 cv2.createTrackbar('low H', 'controls', 0, 179, callback)
 cv2.createTrackbar('high H', 'controls', 179, 179, callback)
@@ -61,24 +61,23 @@ while True:
     if frame is None:
         break
 
-    # frame = imutils.resize(frame, width=600)
-    blurred = cv2.GaussianBlur(frame, (21, 21), 0)
+    frame = imutils.resize(frame, width=800)
+    blurred = cv2.GaussianBlur(frame, (5, 5), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
     mask = cv2.inRange(hsv, bballLower, bballUpper)
-    mask = cv2.erode(mask, None, iterations=1)
+    mask = cv2.erode(mask, None, iterations=2)
     # mask = cv2.dilate(mask, None, iterations=2)
 
     cv2.imshow("Frame", frame)
     cv2.imshow("Mask", mask)
     # create trackbars for high,low H,S,V
 
-    key = cv2.waitKey(24)
+    key = cv2.waitKey(1)
     if key == 27:
         break
     if key == 13:
         _, frame = cap.read()
-
 
 cap.release()
 cv2.destroyAllWindows()

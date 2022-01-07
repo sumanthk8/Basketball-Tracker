@@ -4,7 +4,7 @@ import imutils
 from collections import deque
 import math
 
-cap = cv2.VideoCapture("../videos/Steph Curry 3 point contest.mp4")
+cap = cv2.VideoCapture("../../videos/Steph Curry 3 point contest.mp4")
 
 cv2.namedWindow('controls',2)
 cv2.resizeWindow("controls", 550, 10);
@@ -42,17 +42,17 @@ while True:
         if area > 250:
 
             (x, y), radius = cv2.minEnclosingCircle(cnt)
-            ((rx, ry), (width, height), angle) = cv2.minAreaRect(cnt)
-            minRectArea = width*height
-            print(minRectArea)
             minCircArea = math.pi * radius * radius
-            print(minCircArea)
+            # ((rx, ry), (width, height), angle) = cv2.minAreaRect(cnt)
+            # minRectArea = width*height
+            # print(minRectArea)
+            # print(minCircArea)
 
             if (y > 275):
                 continue
 
-            if minCircArea > minRectArea:
-                continue
+            # if minCircArea > minRectArea:
+            #     continue
 
             matchFactor = area / (minCircArea)
 

@@ -1,5 +1,11 @@
+import numpy
 import numpy as np
 
+# for future robustness if more varibles need to be added to state vector
+# # index of each variable in the state vector
+# iX = 0
+# iV = 1
+# NUMVARS = iV + 1
 
 class KF:
     def __init__(self,  initial_x: float,
@@ -46,6 +52,9 @@ class KF:
 
         self._x = new_x
         self._P = new_P
+
+    def twoSidedConfidenceInterval(self, int) -> numpy.array:
+        return numpy.array([self._x[0] - 1.96*np.sqrt(self._P[0, 0]), self._x[0] + 1.96*np.sqrt(self._P[0, 0])])
 
     @property
     def mean(self) -> np.array:
